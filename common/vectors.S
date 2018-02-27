@@ -46,6 +46,7 @@ endfunc vector_stub_\num
  * an unconditional jump back to itself, i.e. an infinite loop. So it's safe to
  * entirely omit vectors for impossible exceptions.
  */
+vector_stub 0
 vector_jump RESET_EXCEPTION start
 vector_stub BUS_ERROR
 vector_stub TICK_TIMER_EXCEPTION

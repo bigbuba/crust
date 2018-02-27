@@ -12,6 +12,9 @@ void
 handle_exception(uint32_t number, struct exception_regs *regs)
 {
 	switch (number) {
+	case 0:
+		panic("NULL function pointer! (lr=%p)",
+		      (void *)regs->r9);
 	case TICK_TIMER_EXCEPTION:
 		break;
 	case EXTERNAL_INTERRUPT:
