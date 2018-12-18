@@ -1,6 +1,6 @@
 /*
  * Copyright © 2017-2018 The Crust Firmware Authors.
- * SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0)
+ * SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0-only
  */
 
 #ifndef DRIVERS_CLOCK_H
@@ -34,10 +34,11 @@
 	}
 
 enum {
-	CLK_READABLE = BIT(0), /**< Clock is readable via SCPI. */
-	CLK_WRITABLE = BIT(1), /**< Clock is writable via SCPI. */
-	CLK_CRITICAL = BIT(4), /**< Clock cannot be disabled. */
-	CLK_FIXED    = BIT(5), /**< Clock rate cannot be changed. */
+	CLK_READABLE  = BIT(0), /**< Clock is readable via SCPI. */
+	CLK_WRITABLE  = BIT(1), /**< Clock is writable via SCPI. */
+	CLK_CRITICAL  = BIT(4), /**< Clock cannot be disabled. */
+	CLK_FIXED     = BIT(5), /**< Clock rate cannot be changed. */
+	CLK_SCPI_MASK = CLK_READABLE | CLK_WRITABLE,
 };
 
 struct clock_handle {

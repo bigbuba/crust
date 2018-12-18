@@ -1,6 +1,6 @@
 /*
  * Copyright © 2017-2018 The Crust Firmware Authors.
- * SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0)
+ * SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0-only
  */
 
 #include <bitfield.h>
@@ -269,7 +269,6 @@ sunxi_ccu_probe(struct device *dev __unused)
 
 const struct clock_driver sunxi_ccu_driver = {
 	.drv = {
-		.name  = "sunxi-ccu",
 		.class = DM_CLASS_CLOCK,
 		.probe = sunxi_ccu_probe,
 	},

@@ -1,9 +1,8 @@
 /*
  * Copyright © 2017-2018 The Crust Firmware Authors.
- * SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0)
+ * SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0-only
  */
 
-#include <clock.h>
 #include <error.h>
 #include <mmio.h>
 #include <timer.h>
@@ -57,6 +56,11 @@ sunxi_twd_enable(struct device *dev, uint32_t timeout)
 static int
 sunxi_twd_probe(struct device *dev)
 {
+	int err;
+
+	if ((err = dm_setup_clocks(dev, 1)))
+		return err;
+
 	/* Disable watchdog. */
 	sunxi_twd_disable(dev);
 
@@ -68,7 +72,6 @@ sunxi_twd_probe(struct device *dev)
 
 const struct watchdog_driver sunxi_twd_driver = {
 	.drv = {
-		.name  = "sunxi-twd",
 		.class = DM_CLASS_WATCHDOG,
 		.probe = sunxi_twd_probe,
 	},

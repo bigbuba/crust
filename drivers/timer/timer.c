@@ -1,6 +1,6 @@
 /*
  * Copyright © 2017-2018 The Crust Firmware Authors.
- * SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0)
+ * SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0-only
  */
 
 #include <compiler.h>
@@ -13,7 +13,7 @@
 #include <work.h>
 #include <platform/time.h>
 
-#define MAX_PERIODIC_ITEMS 1
+#define MAX_PERIODIC_ITEMS 2
 
 static struct handler periodic_work_items[MAX_PERIODIC_ITEMS];
 static struct device *timer;

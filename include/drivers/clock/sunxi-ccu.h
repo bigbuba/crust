@@ -1,6 +1,6 @@
 /*
  * Copyright © 2017-2018 The Crust Firmware Authors.
- * SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0)
+ * SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0-only
  */
 
 #ifndef DRIVERS_CLOCK_SUNXI_CCU_H
@@ -12,7 +12,7 @@
 #include <util.h>
 
 #define SUNXI_CCU_DRVDATA \
-	(uintptr_t)&(struct sunxi_ccu_clock[])
+	(uintptr_t)(struct sunxi_ccu_clock[])
 
 struct sunxi_ccu_clock {
 	/** Generic clock information shared by all drivers. */

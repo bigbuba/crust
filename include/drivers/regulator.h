@@ -1,6 +1,6 @@
 /*
  * Copyright © 2017-2018 The Crust Firmware Authors.
- * SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0)
+ * SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0-only
  */
 
 #ifndef DRIVERS_REGULATOR_H
@@ -16,9 +16,10 @@
 	(&container_of((dev)->drv, struct regulator_driver, drv)->ops)
 
 enum {
-	REGL_READABLE = BIT(0), /**< Regulator is readable via SCPI. */
-	REGL_WRITABLE = BIT(1), /**< Regulator is writable via SCPI. */
-	REGL_CRITICAL = BIT(4), /**< Regulator cannot be disabled. */
+	REGL_READABLE  = BIT(0), /**< Regulator is readable via SCPI. */
+	REGL_WRITABLE  = BIT(1), /**< Regulator is writable via SCPI. */
+	REGL_CRITICAL  = BIT(4), /**< Regulator cannot be disabled. */
+	REGL_SCPI_MASK = REGL_READABLE | REGL_WRITABLE,
 };
 
 struct regulator_range {
@@ -36,7 +37,6 @@ struct regulator_info {
 };
 
 struct regulator_driver_ops {
-	uint8_t                (*get_count)(struct device *dev);
 	struct regulator_info *(*get_info)(struct device *dev, uint8_t id);
 	int                    (*get_state)(struct device *dev, uint8_t id);
 	int                    (*read_raw)(struct device *dev, uint8_t id,
@@ -81,20 +81,6 @@ static inline int
 regulator_enable(struct device *dev, uint8_t id)
 {
 	return REGULATOR_OPS(dev)->set_state(dev, id, true);
-}
-
-/**
- * Get the number of regulator channels within a device.
- *
- * This function has no defined errors.
- *
- * @param dev   A device containing one or more regulators.
- * @return      The number of regulators controlled by this device.
- */
-static inline uint8_t
-regulator_get_count(struct device *dev)
-{
-	return REGULATOR_OPS(dev)->get_count(dev);
 }
 
 /**
@@ -143,6 +129,19 @@ regulator_get_state(struct device *dev, uint8_t id)
  * @return      Zero on success; a defined error code on failure.
  */
 int regulator_get_value(struct device *dev, uint8_t id, uint16_t *value);
+
+/**
+ * Set all regulators controlled by a device to their default values.
+ *
+ * This function may fail with:
+ *   EIO    There was a problem communicating with the hardware.
+ *   ERANGE A requested value is below the minimum or above the maximum
+ *          allowed value for the regulator.
+ *
+ * @param dev    A device containing one or more regulators.
+ * @param values An array of values, one for each regulator in the device.
+ */
+int regulator_set_defaults(struct device *dev, uint16_t *values);
 
 /**
  * Set the value of a regulator. If the regulator is currently disabled, this

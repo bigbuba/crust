@@ -1,13 +1,11 @@
 /*
  * Copyright © 2017-2018 The Crust Firmware Authors.
- * SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0)
+ * SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0-only
  */
 
-#include <clock.h>
 #include <debug.h>
 #include <dm.h>
 #include <error.h>
-#include <irqchip.h>
 #include <mmio.h>
 #include <msgbox.h>
 #include <stdbool.h>
@@ -169,7 +167,7 @@ sunxi_msgbox_probe(struct device *dev)
 	/* Ensure a handler array was allocated. */
 	assert(dev->drvdata);
 
-	if ((err = clock_enable(dev->clockdev, dev->clock)))
+	if ((err = dm_setup_clocks(dev, 1)))
 		return err;
 
 	/* Drain all messages (required to clear interrupts). */
@@ -182,8 +180,7 @@ sunxi_msgbox_probe(struct device *dev)
 	mmio_write32(dev->regs + IRQ_EN_REG, 0);
 	mmio_write32(dev->regs + IRQ_STATUS_REG, BITMASK(0, 16));
 
-	if ((err = irqchip_enable(dev->irqdev, dev->irq,
-	                          sunxi_msgbox_irq, dev)))
+	if ((err = dm_setup_irq(dev, sunxi_msgbox_irq)))
 		return err;
 
 	return SUCCESS;
@@ -191,7 +188,6 @@ sunxi_msgbox_probe(struct device *dev)
 
 const struct msgbox_driver sunxi_msgbox_driver = {
 	.drv = {
-		.name  = "sunxi-msgbox",
 		.class = DM_CLASS_MSGBOX,
 		.probe = sunxi_msgbox_probe,
 	},

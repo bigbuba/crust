@@ -1,6 +1,6 @@
 /*
  * Copyright © 2017-2018 The Crust Firmware Authors.
- * SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0)
+ * SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0-only
  */
 
 #include <console.h>
@@ -14,13 +14,12 @@
 #define BYTES_PER_ROW  16
 #define BYTES_PER_WORD sizeof(uint32_t)
 
-static char *prefixes[] = {
+static char *prefixes[LOG_LEVELS] = {
 	"PANIC:\t ",
 	"ERROR:\t ",
 	"WARNING: ",
 	"INFO:\t ",
 	"DEBUG:\t ",
-	"TEST:\t ",
 };
 
 static void print_decimal(char sign, int width, bool zero, uint32_t num);
@@ -110,6 +109,7 @@ conversion:
 			print_string("0x");
 			width = 2 * sizeof(arg);
 			zero  = true;
+		/* falls through */
 		case 'x':
 			print_hex(width, zero, arg);
 			break;

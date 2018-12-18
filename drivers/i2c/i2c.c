@@ -1,10 +1,11 @@
 /*
  * Copyright © 2017-2018 The Crust Firmware Authors.
- * SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0)
+ * SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0-only
  */
 
 #include <dm.h>
 #include <i2c.h>
+#include <stdint.h>
 
 int
 i2c_probe(struct device *dev, uint8_t addr)

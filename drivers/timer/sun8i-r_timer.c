@@ -1,13 +1,11 @@
 /*
  * Copyright © 2017-2018 The Crust Firmware Authors.
- * SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0)
+ * SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0-only
  */
 
-#include <clock.h>
 #include <delay.h>
 #include <dm.h>
 #include <error.h>
-#include <irqchip.h>
 #include <mmio.h>
 #include <stdbool.h>
 #include <stddef.h>
@@ -73,7 +71,7 @@ sun8i_r_timer_probe(struct device *dev)
 	int err;
 	uintptr_t index = dev->drvdata;
 
-	if ((err = clock_enable(dev->clockdev, dev->clock)))
+	if ((err = dm_setup_clocks(dev, 1)))
 		return err;
 
 	/* Stop the timer and set it to 24MHz one-shot mode. */
@@ -85,8 +83,7 @@ sun8i_r_timer_probe(struct device *dev)
 	mmio_write32(dev->regs + IRQ_STATUS_REG, BIT(index));
 
 	/* Register and enable the IRQ at the interrupt controller. */
-	if ((err = irqchip_enable(dev->irqdev, dev->irq,
-	                          sun8i_r_timer_irq, dev)))
+	if ((err = dm_setup_irq(dev, sun8i_r_timer_irq)))
 		return err;
 
 	/* Register this device with the timer framework. */
@@ -98,7 +95,6 @@ sun8i_r_timer_probe(struct device *dev)
 
 const struct timer_driver sun8i_r_timer_driver = {
 	.drv = {
-		.name  = "sunxi-r_timer",
 		.class = DM_CLASS_TIMER,
 		.probe = sun8i_r_timer_probe,
 	},

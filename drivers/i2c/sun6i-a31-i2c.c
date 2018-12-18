@@ -1,16 +1,17 @@
 /*
  * Copyright © 2017-2018 The Crust Firmware Authors.
- * SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0)
+ * SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0-only
  */
 
-#include <clock.h>
 #include <delay.h>
 #include <dm.h>
 #include <error.h>
-#include <gpio.h>
 #include <i2c.h>
 #include <mmio.h>
+#include <stdbool.h>
+#include <stdint.h>
 #include <util.h>
+#include <i2c/sun6i-a31-i2c.h>
 
 #define I2C_ADDR_REG  0x00
 #define I2C_XADDR_REG 0x04
@@ -131,17 +132,14 @@ sun6i_a31_i2c_start(struct device *dev, uint8_t addr, uint8_t direction)
 	return SUCCESS;
 }
 
-static int
+static void
 sun6i_a31_i2c_stop(struct device *dev)
 {
 	/* Send a stop condition. */
 	mmio_setbits32(dev->regs + I2C_CTRL_REG, BIT(4) | BIT(3));
 
 	/* Wait for the bus to go idle. */
-	if (!sun6i_a31_i2c_wait_idle(dev))
-		return EIO;
-
-	return SUCCESS;
+	sun6i_a31_i2c_wait_idle(dev);
 }
 
 static int
@@ -163,14 +161,14 @@ sun6i_a31_i2c_probe(struct device *dev)
 {
 	int err;
 
-	if ((err = clock_enable(dev->clockdev, dev->clock)))
+	if ((err = dm_setup_clocks(dev, 1)))
 		return err;
 
 	/* Set port L pins 0-1 to I²C. */
 	if ((err = dm_setup_pins(dev, I2C_NUM_PINS)))
 		return err;
 
-	/* Set I2C bus clock divider for 100 KHz operation. */
+	/* Set I2C bus clock divider for 400 KHz operation. */
 	mmio_write32(dev->regs + I2C_CCR_REG, 0x00000011);
 
 	/* Clear slave address (this driver only supports master mode). */
@@ -193,7 +191,6 @@ sun6i_a31_i2c_probe(struct device *dev)
 
 const struct i2c_driver sun6i_a31_i2c_driver = {
 	.drv = {
-		.name  = "sun6i-a31-i2c",
 		.class = DM_CLASS_I2C,
 		.probe = sun6i_a31_i2c_probe,
 	},

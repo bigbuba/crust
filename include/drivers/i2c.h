@@ -1,6 +1,6 @@
 /*
  * Copyright © 2017-2018 The Crust Firmware Authors.
- * SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0)
+ * SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0-only
  */
 
 #ifndef DRIVERS_I2C_H
@@ -21,10 +21,10 @@ enum {
 };
 
 struct i2c_driver_ops {
-	int (*read)(struct device *dev, uint8_t *data);
-	int (*start)(struct device *dev, uint8_t addr, uint8_t direction);
-	int (*stop)(struct device *dev);
-	int (*write)(struct device *dev, uint8_t data);
+	int  (*read)(struct device *dev, uint8_t *data);
+	int  (*start)(struct device *dev, uint8_t addr, uint8_t direction);
+	void (*stop)(struct device *dev);
+	int  (*write)(struct device *dev, uint8_t data);
 };
 
 struct i2c_driver {
